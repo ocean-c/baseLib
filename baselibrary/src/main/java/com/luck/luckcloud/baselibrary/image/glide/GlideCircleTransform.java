@@ -14,16 +14,16 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
  * Created by fa on 2019/5/14.
  */
 
-public class GlideCircleTransform extends BitmapTransformation {
+public class GlideCircleTransform {
 
     public GlideCircleTransform(Context context) {
-        super(context);
+//        super(context);
     }
 
-    @Override
-    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
-        return circleCrop(pool, toTransform);
-    }
+//    @Override
+//    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+//        return circleCrop(pool, toTransform);
+//    }
 
     private static Bitmap circleCrop(BitmapPool pool, Bitmap source) {
         if (source == null) return null;
@@ -44,8 +44,8 @@ public class GlideCircleTransform extends BitmapTransformation {
         return result;
     }
 
-    @Override
+   /* @Override
     public String getId() {
         return getClass().getName();
-    }
+    }*/
 }

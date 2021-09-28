@@ -17,8 +17,8 @@ import com.bumptech.glide.module.GlideModule;
  * date: 2018/1/15 09:31.
  * 内部默认存储的目录：data/data/包名/cache/image_manager_disk_cache
  */
-public class GlideCacheModule implements GlideModule {
-    private static final String TAG = GlideCacheModule.class.getSimpleName();
+public class GlideCacheModule {
+   /* private static final String TAG = GlideCacheModule.class.getSimpleName();
 
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
@@ -47,5 +47,5 @@ public class GlideCacheModule implements GlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide) {
-    }
+    }*/
 }

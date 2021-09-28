@@ -27,7 +27,7 @@ ext {
             // 分包
             multidexVerison            : "1.0.1",
             // Gilde
-            glideVersion               : "3.7.0",
+            glideVersion               : "4.9.0",
             // 权限管理框架
             permissionDispatcherVersion: "3.0.1",
             // 注解处理器

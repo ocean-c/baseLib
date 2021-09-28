@@ -7,16 +7,19 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+
+import java.security.MessageDigest;
 
 /**
  * Glide的圆角处理
  * Created by fa on 2019/5/14.
  */
-public class GlideRoundTransform extends BitmapTransformation {
-    private static float radius = 0f;
+public class GlideRoundTransform {
+    /*private static float radius = 0f;
 
     public GlideRoundTransform(Context context) {
         this(context, 4);
@@ -53,4 +56,5 @@ public class GlideRoundTransform extends BitmapTransformation {
     public String getId() {
         return getClass().getName() + Math.round(radius);
     }
+*/
 }

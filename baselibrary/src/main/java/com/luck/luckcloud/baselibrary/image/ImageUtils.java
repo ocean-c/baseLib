@@ -6,23 +6,29 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.target.ViewTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.luck.luckcloud.baselibrary.R;
-import com.luck.luckcloud.baselibrary.image.glide.GlideCircleTransform;
 import com.luck.luckcloud.baselibrary.image.glide.GlideRoundTransform;
 
 /**
@@ -58,7 +64,7 @@ public class ImageUtils {
     }
 
     public static void showImage(Context context, Object imagePath, ImageView imageView, int imageWidth, int imageHeight, int placeHolder) {
-        DrawableRequestBuilder builder = getBuilder(context, imagePath, placeHolder);
+        RequestBuilder builder = getBuilder(context, imagePath, placeHolder);
         if (imageWidth > 0 && imageHeight > 0) {
             builder.override(imageWidth, imageHeight);
         }
@@ -78,7 +84,7 @@ public class ImageUtils {
     }
 
     public static void showImageCenterCrop(Context context, Object imagePath, ImageView imageView, int placeHolder, int width, int height) {
-        DrawableRequestBuilder builder = getBuilder(context, imagePath, placeHolder);
+        RequestBuilder builder = getBuilder(context, imagePath, placeHolder);
         builder.centerCrop();
         if (width > 0 && height > 0) {
             builder.override(width, height);
@@ -91,7 +97,7 @@ public class ImageUtils {
     }
 
     public static void showImageFitCenter(Context context, Object imagePath, ImageView imageView, int placeHolder) {
-        DrawableRequestBuilder builder = getBuilder(context, imagePath, placeHolder);
+        RequestBuilder builder = getBuilder(context, imagePath, placeHolder);
         builder.fitCenter();
         builder.into(imageView);
     }
@@ -101,8 +107,9 @@ public class ImageUtils {
     }
 
     public static void showImageRound(Context context, Object imagePath, ImageView imageView, int placeHolder, int roundDP) {
-        DrawableRequestBuilder builder = getBuilder(context, imagePath, placeHolder);
-        builder.transform(new CenterCrop(context), new GlideRoundTransform(context, roundDP));
+
+        RequestBuilder builder = getBuilder(context, imagePath, placeHolder);
+        builder.transform(new CenterCrop(), new RoundedCorners(roundDP));
         builder.into(imageView);
     }
 
@@ -111,14 +118,15 @@ public class ImageUtils {
     }
 
     public static void showImageCircle(Context context, Object imagePath, ImageView imageView, int placeHolder) {
-        DrawableRequestBuilder builder = getBuilder(context, imagePath, placeHolder);
+        RequestBuilder builder = getBuilder(context, imagePath, placeHolder);
         builder.centerCrop();
-        builder.transform(new GlideCircleTransform(context));
+        builder.transform(new CircleCrop());
         builder.into(imageView);
     }
 
-    private static DrawableRequestBuilder getBuilder(Context context, Object imagePath, int placeHolder) {
-        DrawableRequestBuilder builder = Glide.with(context).load(imagePath);
+    private static RequestBuilder<Drawable> getBuilder(Context context, Object imagePath, int placeHolder) {
+        RequestBuilder<Drawable> load = Glide.with(context).load(imagePath);
+        RequestBuilder<Drawable> builder = Glide.with(context).load(imagePath);
         if (placeHolder != 0) {
             builder.error(placeHolder).placeholder(placeHolder);
         }
@@ -128,9 +136,9 @@ public class ImageUtils {
 
     public static void showImageCenterCropOverride(Context context, Object imagePath, ImageView imageView,
                                                    int width, int height, int placeHolder) {
-        DrawableRequestBuilder builder = getBuilder(context, imagePath, placeHolder);
+        RequestBuilder builder = getBuilder(context, imagePath, placeHolder);
         builder.centerCrop();
-        builder.crossFade();
+        builder.transition(DrawableTransitionOptions.withCrossFade());
         if (width > 0 && height > 0) {
             builder.override(width, height);
         }
@@ -139,7 +147,6 @@ public class ImageUtils {
 
     public static void showGifCenterCrop(Context context, Object imagePath, ImageView imageView, int placeHolder) {
         Glide.with(context).load(imagePath)
-                .asGif()
                 .centerCrop()
                 .error(placeHolder)
                 .skipMemoryCache(true)// 禁止内存缓存
@@ -152,7 +159,7 @@ public class ImageUtils {
      * 给Layout设置背景
      */
     public static void showLayoutBg(final Context context, Object imagePath, final View layout) {
-        showLayoutBg(context, imagePath, layout, R.color.color_f7f7f7);
+//        showLayoutBg(context, imagePath, layout, R.color.color_f7f7f7);
     }
 
     public static void showLayoutRoundBg(final Context context, Object imagePath, final View layout, int roundDP) {
@@ -162,7 +169,7 @@ public class ImageUtils {
     /**
      * 给Layout设置背景
      */
-    public static void showLayoutBg(final Context context, Object imagePath, final View layout, int placeHolder) {
+   /* public static void showLayoutBg(final Context context, Object imagePath, final View layout, int placeHolder) {
         Glide.with(context)
                 .load(imagePath)
                 .error(placeHolder)
@@ -173,18 +180,17 @@ public class ImageUtils {
                         this.view.setBackground(resource.getCurrent());
                     }
                 });
-    }
-
+    }*/
     public static void showLayoutRoundBg(final Context context, Object imagePath, final View layout, int placeHolder, int rounddp) {
         Glide.with(context)
                 .load(imagePath)
-                .transform(new CenterCrop(context), new GlideRoundTransform(context, rounddp))
+                .transform(new CenterCrop(), new RoundedCorners(rounddp))
                 .error(placeHolder)
                 .placeholder(placeHolder)
-                .into(new ViewTarget<View, GlideDrawable>(layout) {
+                .into(new ViewTarget<View, Drawable>(layout) {
                     @Override
-                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        this.view.setBackground(resource.getCurrent());
+                    public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
+                        this.view.setBackground(drawable.getCurrent());
                     }
                 });
     }
@@ -197,10 +203,10 @@ public class ImageUtils {
                 .load(imagePath)
                 .error(placeHolder)
                 .placeholder(placeHolder)
-                .into(new ViewTarget<View, GlideDrawable>(layout) {
+                .into(new ViewTarget<View, Drawable>(layout) {
                     @Override
-                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        layout.setBackground(resource.getCurrent());
+                    public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
+                        this.view.setBackground(drawable.getCurrent());
                     }
                 });
     }
@@ -209,17 +215,17 @@ public class ImageUtils {
      * 加载Bitmap
      */
     public static void getBitmap(final Context context, Object imagePath, final LoadBitmapCallback callback) {
-        Glide.with(context)
+        Glide.with(context).asBitmap()
                 .load(imagePath)
-                .asBitmap()
                 .into(new SimpleTarget<Bitmap>() {
+
                     @Override
-                    public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                    public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
                         if (context instanceof Activity && ((Activity) context).isDestroyed()) {
                             return;
                         }
                         if (callback != null) {
-                            callback.onLoadReady(bitmap, glideAnimation);
+                            callback.onLoadReady(bitmap, transition);
                         }
                     }
                 });
@@ -228,9 +234,10 @@ public class ImageUtils {
     public static void LoadImageWithCallback(Context context, final ImageView imageView, Object obj, final LoadDrawableCallback callback) {
         Glide.with(context)
                 .load(obj)
-                .listener(new RequestListener<Object, GlideDrawable>() {
+                .listener(new RequestListener<Drawable>() {
+
                     @Override
-                    public boolean onException(Exception e, Object model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object o, Target<Drawable> target, boolean b) {
                         if (callback != null) {
                             callback.onLoadException(e);
                         }
@@ -238,9 +245,9 @@ public class ImageUtils {
                     }
 
                     @Override
-                    public boolean onResourceReady(GlideDrawable resource, Object model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    public boolean onResourceReady(Drawable drawable, Object o, Target<Drawable> target, DataSource dataSource, boolean b) {
                         if (callback != null) {
-                            callback.onLoadReady(resource);
+                            callback.onLoadReady(drawable);
                         }
                         return false;
                     }
@@ -251,18 +258,11 @@ public class ImageUtils {
     public static void getImageDrawable(Context context, Object path, final LoadDrawableCallback callback) {
         Glide.with(context)
                 .load(path)
-                .into(new SimpleTarget<GlideDrawable>() {
+                .into(new SimpleTarget<Drawable>() {
                     @Override
-                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                    public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
                         if (callback != null) {
-                            callback.onLoadReady(resource);
-                        }
-                    }
-
-                    @Override
-                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                        if (callback != null) {
-                            callback.onLoadException(e);
+                            callback.onLoadReady(drawable);
                         }
                     }
                 });
@@ -272,7 +272,7 @@ public class ImageUtils {
      * 获取Bitmap的回调
      */
     public interface LoadBitmapCallback {
-        void onLoadReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation);
+        void onLoadReady(Bitmap bitmap, Transition<? super Bitmap> glideAnimation);
     }
 
     /**
@@ -298,14 +298,15 @@ public class ImageUtils {
      */
     public static void showLayoutBgWithSize(final Context context, Object imagePath, final ViewGroup layout, int width, int height, final int placeHolder) {
         Glide.with(context)
-                .load(imagePath)
                 .asBitmap()
-                .into(new SimpleTarget<Bitmap>(width, height) {//设置宽高
+                .load(imagePath)
+                .into(new SimpleTarget<Bitmap>(width, height) {
+                          //设置宽高
                           @Override
-                          public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                          public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
                               Drawable drawable;
-                              if (resource != null) {
-                                  drawable = new BitmapDrawable(context.getResources(), resource);
+                              if (bitmap != null) {
+                                  drawable = new BitmapDrawable(context.getResources(), bitmap);
 
                               } else {
                                   drawable = ContextCompat.getDrawable(context, placeHolder);
@@ -317,7 +318,6 @@ public class ImageUtils {
                               }
                           }
                       }
-
                 );
     }
 }
